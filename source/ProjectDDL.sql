@@ -23,27 +23,28 @@ create table tweets(
     primary key(tid), 
     foreign key(postedUser) references users(screen_name));
     
-create table hashtags(
-	name varchar(200), 
-    primary key(name));
-    
-create table urls(
-	address varchar(500), 
-    primary key(address));
     
 create table hasTags(
 	tid bigint,
     name varchar(200),
     foreign key(tid) references tweets(tid),
-    foreign key(name) references hashtags(name),
-    primary key(tid,name));
+    primary key(name,tid));
+    
+create table hashtags(
+	name varchar(200), 
+    foreign key(name) references hasTags(name),
+    primary key(name));
     
 create table hasUrls(
 	tid bigint,
     address varchar(500),
 	foreign key(tid) references tweets(tid),
-    foreign key(address) references urls(address),
-    primary key(tid,address));
+    primary key(address,tid));
+    
+create table urls(
+	address varchar(500), 
+    foreign key(address) references hasUrls(address),
+    primary key(address));
     
 create table mentions(
 	tid bigint,

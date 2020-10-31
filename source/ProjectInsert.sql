@@ -24,16 +24,22 @@ IGNORE 1 LINES
 (tid,textbody,retweet_count,@col4,createdTime,postedUser);
 
 LOAD DATA INFILE 'C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/2016/tagged.csv' 
+REPLACE INTO TABLE hasTags
+FIELDS TERMINATED BY ';' OPTIONALLY ENCLOSED BY '"' LINES TERMINATED BY '\n'
+IGNORE 1 LINES
+(tid,name);
+
+LOAD DATA INFILE 'C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/2016/tagged.csv' 
 REPLACE INTO TABLE hashtags
 FIELDS TERMINATED BY ';' OPTIONALLY ENCLOSED BY '"' LINES TERMINATED BY '\n'
 IGNORE 1 LINES
 (@col1,name);
 
-LOAD DATA INFILE 'C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/2016/tagged.csv' 
-REPLACE INTO TABLE hasTags
+LOAD DATA INFILE 'C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/2016/urlused.csv' 
+REPLACE INTO TABLE hasUrls
 FIELDS TERMINATED BY ';' OPTIONALLY ENCLOSED BY '"' LINES TERMINATED BY '\n'
 IGNORE 1 LINES
-(tid,name);
+(tid,address);
 
 LOAD DATA INFILE 'C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/2016/urlused.csv' 
 REPLACE INTO TABLE urls
@@ -41,11 +47,6 @@ FIELDS TERMINATED BY ';' OPTIONALLY ENCLOSED BY '"' LINES TERMINATED BY '\n'
 IGNORE 1 LINES
 (@col1,address);
 
-LOAD DATA INFILE 'C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/2016/urlused.csv' 
-REPLACE INTO TABLE hasUrls
-FIELDS TERMINATED BY ';' OPTIONALLY ENCLOSED BY '"' LINES TERMINATED BY '\n'
-IGNORE 1 LINES
-(tid,address);
 
 LOAD DATA INFILE 'C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/2016/mentioned.csv' 
 REPLACE INTO TABLE mentions
