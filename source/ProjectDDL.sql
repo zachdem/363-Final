@@ -1,3 +1,5 @@
+# Authors: Andrew Koenen & Zach DeMaris
+
 drop database if exists group5;
 
 create database group5;

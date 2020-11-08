@@ -1,3 +1,5 @@
+# Authors: Andrew Koenen & Zach DeMaris
+
 -- run forimport.sql
 -- make sure that the file is named correctly.
 -- for 2020 data, use ',' as the field terminator
