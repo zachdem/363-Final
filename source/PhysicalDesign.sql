@@ -7,6 +7,10 @@ SET GLOBAL innodb_buffer_pool_size = 83886080;
 # ---------------Optimization for Q18 and Q3 Increase buffer pool size from 8.3 Mb to 83.89 Mb
 
 
+# ---------------------- Optimization for Q7
+CREATE INDEX htid ON hastags (tid);
+# ---------------------- Optimization for Q7
+
 
 # ---------------------- Optimization for Q9
 CREATE INDEX sc_idx ON users (sub_category);
