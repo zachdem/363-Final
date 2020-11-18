@@ -1,4 +1,4 @@
-SELECT m.mentioned, u2.state, group_concat(distinct(t.postedUser)), count(*) 
+SELECT m.mentioned mentionedUser , u2.state mentionedUserState, group_concat(distinct(t.postedUser)) postingUsers
 FROM users u, tweets t, mentions m, users u2
 WHERE t.postedUser = u.screen_name
 AND t.tid = m.tid
