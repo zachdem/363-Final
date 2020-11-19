@@ -1,8 +1,12 @@
 //@authors Zachary DeMaris, Andrew Koenen
 package cs363;
 
+import java.awt.Color;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.sql.*;
 import javax.swing.*;
+import javax.swing.border.LineBorder;
 
 public class cs363Final {
 
@@ -315,8 +319,52 @@ public class cs363Final {
 			conn.setAutoCommit(true);
 
 	}
+	
+	/**
+	 * @return returns an array of username, password
+	 */
+	public static String[] loginDialog() {
+		String result[] = new String[2];
+		JPanel panel = new JPanel(new GridBagLayout());
+		GridBagConstraints cs = new GridBagConstraints();
 
+		cs.fill = GridBagConstraints.HORIZONTAL;
 
+		JLabel lbUsername = new JLabel("Username: ");
+		cs.gridx = 0;
+		cs.gridy = 0;
+		cs.gridwidth = 1;
+		panel.add(lbUsername, cs);
+
+		JTextField tfUsername = new JTextField(20);
+		cs.gridx = 1;
+		cs.gridy = 0;
+		cs.gridwidth = 2;
+		panel.add(tfUsername, cs);
+
+		JLabel lbPassword = new JLabel("Password: ");
+		cs.gridx = 0;
+		cs.gridy = 1;
+		cs.gridwidth = 1;
+		panel.add(lbPassword, cs);
+
+		JPasswordField pfPassword = new JPasswordField(20);
+		cs.gridx = 1;
+		cs.gridy = 1;
+		cs.gridwidth = 2;
+		panel.add(pfPassword, cs);
+		panel.setBorder(new LineBorder(Color.GRAY));
+
+		String[] options = new String[] { "OK", "Cancel" };
+		int ioption = JOptionPane.showOptionDialog(null, panel, "Login", JOptionPane.OK_OPTION,
+				JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+		if (ioption == 0) // pressing OK button
+		{
+			result[0] = tfUsername.getText();
+			result[1] = new String(pfPassword.getPassword());
+		}
+		return result;
+	}
 
 	/**
 	 * @param args
@@ -325,10 +373,21 @@ public class cs363Final {
 
 		String dbServer = "jdbc:mysql://127.0.0.1:3306/group5?useSSL=false";
 
-		//db user name and password
-		String userName = "coms363";
-		String password = "coms363";
+		
+		
+		String userName = "";
+		String password = "";
 
+		String result[] = loginDialog();
+		userName = result[0];
+		password = result[1];
+		
+
+		
+		if (result[0]==null || result[1]==null) {
+			System.out.println("Terminating: No username nor password is given");
+			return;
+		}
 		Connection conn;
 		Statement stmt;
 
