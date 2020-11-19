@@ -46,53 +46,27 @@ public class cs363Final {
 	 * Deletes customer data from all tables
 	 * 
 	 * @param conn Valid database connection customerID: customer id to be deleted
+	 * @throws SQLException 
 	 */
-	private static void deleteCustomer(Connection conn, String customerID) {
-
-		if (conn == null || customerID == null)
-			throw new NullPointerException();
-		try {
+	private static void deleteCustomer(Connection conn, String screen_name) throws SQLException {
 
 			conn.setAutoCommit(false);
 
 			// Must do deletes in order to not break constraints
-			PreparedStatement paymentDelete = conn.prepareStatement(" delete from payment where customer_id =?");
+			PreparedStatement userDelete = conn.prepareStatement("DELETE FROM users \r\n" + 
+																	"WHERE screen_name = ?");
 
-			PreparedStatement rentalDelete = conn.prepareStatement(" delete from rental where customer_id =?");
+			userDelete.setString(1, screen_name);
+	
 
-			PreparedStatement customerDelete = conn.prepareStatement(" delete from customer where customer_id =?");
-
-			paymentDelete.setString(1, customerID);
-			rentalDelete.setString(1, customerID);
-			customerDelete.setString(1, customerID);
-
-			// Delete from payment
-			System.out.println("Delete customer from payment table, customer_id: " + customerID);
-			int rowcount = paymentDelete.executeUpdate();
+			int rowcount = userDelete.executeUpdate();
 
 			System.out.println("Number of rows deleted:" + rowcount);
-			paymentDelete.close();
+			userDelete.close();;
 
-			// Delete from rental
-			System.out.println("Delete customer from rental table, customer_id: " + customerID);
-			rowcount = rentalDelete.executeUpdate();
-
-			System.out.println("Number of rows deleted:" + rowcount);
-			rentalDelete.close();
-
-			// Delete from customer
-			System.out.println("Delete customer from customer table, customer_id: " + customerID);
-			rowcount = customerDelete.executeUpdate();
-
-			System.out.println("Number of rows deleted:" + rowcount);
-			customerDelete.close();
-
-			// confirm that these are the changes you want to make
 			conn.commit();
 
 			conn.setAutoCommit(true);
-		} catch (SQLException e) {
-		}
 
 	}
 	
@@ -296,6 +270,65 @@ public class cs363Final {
 			runQuery(stmt);
 	
 	}
+	
+
+	
+	private static void insert(Connection conn, String screenName, String name, String numFollowers, String numFollowing, String category, String subCategory, String state) throws SQLException {
+
+			conn.setAutoCommit(false);
+
+			PreparedStatement inststmt = conn
+					.prepareStatement("insert into users (screen_name,name,num_followers,num_following,category,sub_category,state) \r\n" + 
+							"values(?, ?, ?, ?, ?, ?, ?)");
+			
+			inststmt.setString(1, screenName);
+			inststmt.setString(2, name);
+			inststmt.setInt(3, Integer.parseInt(numFollowers));
+			inststmt.setInt(4, Integer.parseInt(numFollowing));
+			inststmt.setString(5, category);
+			inststmt.setString(6, subCategory);
+			inststmt.setString(7, state);
+			
+			int rowcount = inststmt.executeUpdate();
+
+			System.out.println("Number of rows updated:" + rowcount);
+			inststmt.close();
+			// confirm that these are the changes you want to make
+			conn.commit();
+
+			conn.setAutoCommit(true);
+
+
+	}
+	
+	/**
+	 * Deletes customer data from all tables
+	 * 
+	 * @param conn Valid database connection customerID: customer id to be deleted
+	 * @throws SQLException 
+	 */
+	private static void delete(Connection conn, String screenName) throws SQLException {
+
+			conn.setAutoCommit(false);
+
+			// Must do deletes in order to not break constraints
+			PreparedStatement userDelete = conn.prepareStatement("DELETE FROM users \r\n" + 
+																	"WHERE screen_name = ?");
+
+			userDelete.setString(1, screenName);
+	
+
+			int rowcount = userDelete.executeUpdate();
+
+			System.out.println("Number of rows deleted:" + rowcount);
+			userDelete.close();;
+
+			conn.commit();
+
+			conn.setAutoCommit(true);
+
+	}
+
 
 
 	public static void main(String[] args) {
@@ -330,6 +363,8 @@ public class cs363Final {
 								"Enter 16: Run Q16" + "\n" +
 								"Enter 18: Run Q18" + "\n" +
 								"Enter 23: Run Q23" + "\n" +
+								"Enter i: Insert new user" + "\n" +
+								"Enter d: Delete a user" + "\n" +
 								"Enter e: Quit Program";
 
 			while (true) {
@@ -385,7 +420,26 @@ public class cs363Final {
 					
 					runQ23(conn, months, year, category, numRows);
 		
-				}
+				} else if (option.equals("i")) {
+					
+					String screenName = JOptionPane.showInputDialog("Please enter a screen_name:");
+					String name = JOptionPane.showInputDialog("Please enter a name:");
+					String numFollowers = JOptionPane.showInputDialog("Specify the number of followers for this user:");
+					String numFollowing = JOptionPane.showInputDialog("Specify the number of users this user follows");
+					String category = JOptionPane.showInputDialog("Please enter a category:");
+					String subCategory = JOptionPane.showInputDialog("Please enter a sub-category:");
+					String state = JOptionPane.showInputDialog("Please enter a state (e.g. IA):");
+
+					insert(conn, screenName, name, numFollowers, numFollowing, category, subCategory, state);
+		
+				} else if (option.equals("d")) {
+
+					String screenName = JOptionPane.showInputDialog("Please enter a screen_name:");
+					
+					delete(conn, screenName);
+		
+				}  
+				
 				
 				
 				else if (option.equals("e")) {
