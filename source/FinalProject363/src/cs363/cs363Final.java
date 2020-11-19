@@ -1,4 +1,4 @@
-//@author Zachary DeMaris
+//@authors Zachary DeMaris, Andrew Koenen
 package cs363;
 
 import java.sql.*;
@@ -6,71 +6,12 @@ import javax.swing.*;
 
 public class cs363Final {
 
+
 	/**
-	 * Inserts record into actor table
+	 * This function generically executes a provided query and returns the results. Commas separate different columns.
 	 * 
-	 * @param conn Valid database connection firstName: First name of actor
-	 *             lastName: Last name of actor
-	 */
-	private static void insertActor(Connection conn, String firstName, String lastName) {
-
-		if (conn == null || firstName == null || lastName == null)
-			throw new NullPointerException();
-		try {
-			// we want to make sure that all the query and update statements
-			// are considered as one unit; both got done or none got done
-
-			conn.setAutoCommit(false);
-
-			PreparedStatement inststmt = conn
-					.prepareStatement(" insert into actor (first_name,last_name) values(?,?) ");
-
-			inststmt.setString(1, firstName);
-			inststmt.setString(2, lastName);
-
-			System.out.println("Adding actor " + firstName + " " + lastName);
-			int rowcount = inststmt.executeUpdate();
-
-			System.out.println("Number of rows updated:" + rowcount);
-			inststmt.close();
-			// confirm that these are the changes you want to make
-			conn.commit();
-
-			conn.setAutoCommit(true);
-		} catch (SQLException e) {
-		}
-
-	}
-
-	/**
-	 * Deletes customer data from all tables
-	 * 
-	 * @param conn Valid database connection customerID: customer id to be deleted
-	 * @throws SQLException 
-	 */
-	private static void deleteCustomer(Connection conn, String screen_name) throws SQLException {
-
-			conn.setAutoCommit(false);
-
-			// Must do deletes in order to not break constraints
-			PreparedStatement userDelete = conn.prepareStatement("DELETE FROM users \r\n" + 
-																	"WHERE screen_name = ?");
-
-			userDelete.setString(1, screen_name);
-	
-
-			int rowcount = userDelete.executeUpdate();
-
-			System.out.println("Number of rows deleted:" + rowcount);
-			userDelete.close();;
-
-			conn.commit();
-
-			conn.setAutoCommit(true);
-
-	}
-	
-	/**
+	 * @param stmt - SQL to execute
+	 * @throws SQLException
 	 */
 	private static void runQuery(PreparedStatement stmt) throws SQLException {
 		
@@ -100,8 +41,12 @@ public class cs363Final {
 	}
 	
 	
+	
 	/**
-	 * @throws SQLException 
+	 * @param conn - database connection
+	 * @param year - year to look for
+	 * @param numRows - number of rows to return
+	 * @throws SQLException
 	 */
 	private static void runQ3(Connection conn, String year, String numRows) throws SQLException {
 			
@@ -128,8 +73,15 @@ public class cs363Final {
 	
 	
 	
+
 	/**
-	 * @throws SQLException 
+	 * @param conn - database connection
+	 * @param hashtag - hashtag to look for
+	 * @param state - state to look for
+	 * @param month - month to look for
+	 * @param year - year to look for
+	 * @param numRows - number of rows to return
+	 * @throws SQLException
 	 */
 	private static void runQ7(Connection conn, String hashtag, String state, String month, String year, String numRows) throws SQLException {
 			
@@ -160,12 +112,16 @@ public class cs363Final {
 	}
 	
 	
+
 	/**
-	 * @throws SQLException 
+	 * @param conn - database connection
+	 * @param category
+	 * @param numRows - number of rows to return
+	 * @throws SQLException
 	 */
 	private static void runQ9(Connection conn, String category, String numRows) throws SQLException {
 			
-			String sqlQuery = "SELECT u.screen_name, u.sub_category, u.numFollowers FROM users u\r\n" + 
+			String sqlQuery = "SELECT u.screen_name, u.sub_category, u.num_followers numFollowers FROM users u\r\n" + 
 					"WHERE u.sub_category = ? \r\n" + 
 					"ORDER BY u.num_followers desc\r\n" + 
 					"LIMIT ?";
@@ -182,8 +138,13 @@ public class cs363Final {
 	
 	}
 	
+
 	/**
-	 * @throws SQLException 
+	 * @param conn - database connection
+	 * @param month - month to look for
+	 * @param year - year to look for
+	 * @param numRows - number of rows to return
+	 * @throws SQLException
 	 */
 	private static void runQ16(Connection conn, String month, String year, String numRows) throws SQLException {
 			
@@ -213,7 +174,12 @@ public class cs363Final {
 	
 
 	/**
-	 * @throws SQLException 
+	 * @param conn - database connection
+	 * @param month - month to look for
+	 * @param year - year to look for
+	 * @param category
+	 * @param numRows - number of rows to return
+	 * @throws SQLException
 	 */
 	private static void runQ18(Connection conn, String month, String year, String category, String numRows) throws SQLException {
 			
@@ -243,8 +209,14 @@ public class cs363Final {
 	
 	}
 	
+
 	/**
-	 * @throws SQLException 
+	 * @param conn - database connection
+	 * @param months - comma separated list of months (e.g. 1,2,3)
+	 * @param year - year to look for
+	 * @param category
+	 * @param numRows - number of rows to return
+	 * @throws SQLException
 	 */
 	private static void runQ23(Connection conn, String months, String year, String category, String numRows) throws SQLException {
 			
@@ -273,6 +245,19 @@ public class cs363Final {
 	
 
 	
+	/**
+	 * Inserts a new user
+	 * 
+	 * @param conn - database connection
+	 * @param screenName - screen name of user
+	 * @param name - name of user
+	 * @param numFollowers - number of followers
+	 * @param numFollowing - number of users following
+	 * @param category
+	 * @param subCategory
+	 * @param state
+	 * @throws SQLException
+	 */
 	private static void insert(Connection conn, String screenName, String name, String numFollowers, String numFollowing, String category, String subCategory, String state) throws SQLException {
 
 			conn.setAutoCommit(false);
@@ -301,17 +286,19 @@ public class cs363Final {
 
 	}
 	
+
 	/**
-	 * Deletes customer data from all tables
 	 * 
-	 * @param conn Valid database connection customerID: customer id to be deleted
-	 * @throws SQLException 
+	 * Deletes a user with the specified screen name
+	 * 
+	 * @param conn - database connection
+	 * @param screenName - screen name of user
+	 * @throws SQLException
 	 */
 	private static void delete(Connection conn, String screenName) throws SQLException {
 
 			conn.setAutoCommit(false);
 
-			// Must do deletes in order to not break constraints
 			PreparedStatement userDelete = conn.prepareStatement("DELETE FROM users \r\n" + 
 																	"WHERE screen_name = ?");
 
@@ -331,20 +318,16 @@ public class cs363Final {
 
 
 
+	/**
+	 * @param args
+	 */
 	public static void main(String[] args) {
-		
-		
-		String testString = "1,2,3";
-		
-		String[] result = testString.split(",");
-		
-		System.out.println(result[2]);
-		
+
 		String dbServer = "jdbc:mysql://127.0.0.1:3306/group5?useSSL=false";
-		// For compliance with existing applications not using SSL the
-		// verifyServerCertificate property is set to ‘false’,
-		String userName = "root";
-		String password = "root";
+
+		//db user name and password
+		String userName = "coms363";
+		String password = "coms363";
 
 		Connection conn;
 		Statement stmt;
@@ -368,6 +351,7 @@ public class cs363Final {
 								"Enter e: Quit Program";
 
 			while (true) {
+				//Continually loop until a menu option is chosen
 				option = JOptionPane.showInputDialog(instruction);
 				if (option.equals("3")) {
 
